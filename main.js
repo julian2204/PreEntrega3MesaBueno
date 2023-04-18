@@ -109,15 +109,27 @@ function renderizarProductos(arrayProductos){
 
 function agregarProductoAlCarrito(e){
     let productoAgregado = products.find(({id}) => id == e.target.id)
-    
-    carrito.push(productoAgregado)
+    if(carrito.some(producto => producto.id == productoAgregado.id)){
+        let pos = carrito.findIndex(producto => producto.id == productoAgregado.id)
+        carrito[pos].units++
+        carrito[pos].subtotal = carrito[pos].priceUnit * carrito[pos].units 
+
+    }else{
+        carrito.push({
+            id: productoAgregado.id,
+            name: productoAgregado.name,
+            priceUnit : productoAgregado.price,
+            units: 1,
+            subtotal: productoAgregado.price
+        })
+    }
     renderizarCarrito(carrito)
 }
 
 function renderizarCarrito(arrayProductos){
     carritoDOM.innerHTML = ""
-    arrayProductos.forEach(({name, price, stock}) => {
-        carritoDOM.innerHTML += `<h3> ${name} ${price} ${stock} </h3>` 
+    arrayProductos.forEach(({name, subtotal, units}) => {
+        carritoDOM.innerHTML += `<h3> ${name} ${subtotal} ${units} </h3>` 
     }
 
     )
