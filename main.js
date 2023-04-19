@@ -83,7 +83,24 @@ let assortment = [
 
 let products = assortment.map(({id,name,price, stock, category, posterUrl}) => new Products(id, name, price, stock, category, posterUrl))
 let carrito = []
+let botonComprar =document.getElementById("compraFinalizada")
+botonComprar.addEventListener("click", finalizarCompra)
+
+function finalizarCompra(){
+    alert("Muchas gracias por su compra")
+    localStorage.removeItem("carrito")
+    /*localStorage.setItem("carrito", [])*/
+    carrito = []
+    renderizarCarrito(carrito)
+    
+}
+
 let carritoDOM = document.getElementById("carrito")
+if(localStorage.getItem("carrito")){
+    carrito = JSON.parse(localStorage.getItem("carrito"))
+    renderizarCarrito(carrito)
+}
+
 
 renderizarProductos(products)
 function renderizarProductos(arrayProductos){
@@ -112,8 +129,7 @@ function agregarProductoAlCarrito(e){
     if(carrito.some(producto => producto.id == productoAgregado.id)){
         let pos = carrito.findIndex(producto => producto.id == productoAgregado.id)
         carrito[pos].units++
-        carrito[pos].subtotal = carrito[pos].priceUnit * carrito[pos].units 
-
+        carrito[pos].subtotal = carrito[pos].priceUnit * carrito[pos].units     
     }else{
         carrito.push({
             id: productoAgregado.id,
@@ -123,6 +139,7 @@ function agregarProductoAlCarrito(e){
             subtotal: productoAgregado.price
         })
     }
+    localStorage.setItem("carrito", JSON.stringify(carrito))
     renderizarCarrito(carrito)
 }
 
