@@ -85,13 +85,20 @@ let products = assortment.map(({id,name,price, stock, category, posterUrl}) => n
 let carrito = []
 let botonComprar =document.getElementById("compraFinalizada")
 botonComprar.addEventListener("click", finalizarCompra)
-
 function finalizarCompra(){
-    alert("Muchas gracias por su compra")
+    
+    let valorTotal = 0
+    for (let index = 0; index < carrito.length; index++) {
+        valorTotal += carrito[index].subtotal
+        
+    }
+    alert(`Muchas gracias por su compra, el valor a pagar es $${valorTotal}.`)
+    
     localStorage.removeItem("carrito")
     /*localStorage.setItem("carrito", [])*/
     carrito = []
     renderizarCarrito(carrito)
+    
     
 }
 
@@ -145,8 +152,8 @@ function agregarProductoAlCarrito(e){
 
 function renderizarCarrito(arrayProductos){
     carritoDOM.innerHTML = ""
-    arrayProductos.forEach(({name, subtotal, units}) => {
-        carritoDOM.innerHTML += `<h3> ${name} ${subtotal} ${units} </h3>` 
+    arrayProductos.forEach(({name, units}) => {
+        carritoDOM.innerHTML += `<h3> Unidades totales de ${name} ${units}  </h3>` 
     }
 
     )
@@ -162,3 +169,31 @@ function filtrar(){
     renderizarProductos(arrayFiltrado)
     
 }
+
+function categorias(arrayProductos){
+    let categorias = arrayProductos.map(({category}) => category)
+    const catArray = new Set(categorias)
+    let categoriasUnicas = [...catArray]
+    let contenedorCategorias = document.getElementById("contenedorCategorias")
+    console.log(categoriasUnicas)
+    categoriasUnicas.forEach(categoria => {
+        
+        let boxcategoria = document.createElement("div")
+        boxcategoria.className = "tarjetacategoria"
+        boxcategoria.innerHTML = `
+        <input id=${categoria} type="checkbox" value=${categoria}>
+        <label for="vehicle1"> ${categoria}</label>
+        `
+        contenedorCategorias.appendChild(boxcategoria)
+        let boton = document.getElementById(categoria)
+        boton.addEventListener("click", filtrarCategoria)
+        function filtrarCategoria(){
+            let arrayFiltrado = products.filter(({category}) => category == boton.value)
+            renderizarProductos(arrayFiltrado)
+            console.log(boton.value)
+        }
+
+    })
+}
+categorias(products)
+
